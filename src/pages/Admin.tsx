@@ -48,23 +48,12 @@ export default function Admin() {
     checkAuth();
   }, []);
 
-  const checkAuth = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (session?.user) {
-      // Check if user has admin role
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin")
-        .single();
-
-      if (roles) {
-        setIsAuthenticated(true);
-        fetchApplications();
-      }
+  const checkAuth = () => {
+    // Check if already authenticated in session storage
+    const isAuth = sessionStorage.getItem("adminAuth") === "true";
+    if (isAuth) {
+      setIsAuthenticated(true);
+      fetchApplications();
     }
   };
 
@@ -73,34 +62,17 @@ export default function Admin() {
     setLoading(true);
 
     try {
-      // Sign in with Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        // Check if user has admin role
-        const { data: roles, error: rolesError } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id)
-          .eq("role", "admin")
-          .single();
-
-        if (rolesError || !roles) {
-          await supabase.auth.signOut();
-          throw new Error("Unauthorized: Admin access required");
-        }
-
+      // Simple hardcoded credential check
+      if (email === "syedabdulla7979@gmail.com" && password === "MB@#123$abd..") {
+        sessionStorage.setItem("adminAuth", "true");
         setIsAuthenticated(true);
         fetchApplications();
         toast({
           title: "Success",
           description: "Logged in successfully",
         });
+      } else {
+        throw new Error("Invalid credentials");
       }
     } catch (error: any) {
       toast({
@@ -113,8 +85,8 @@ export default function Admin() {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminAuth");
     setIsAuthenticated(false);
     setApplications([]);
   };
