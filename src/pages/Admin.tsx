@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/firebase/client";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +33,7 @@ interface Application {
   resume_url: string | null;
   role: string;
   reason: string;
-  created_at: string;
+  createdAt: any;
 }
 
 export default function Admin() {
@@ -92,21 +93,21 @@ export default function Admin() {
   };
 
   const fetchApplications = async () => {
-    const { data, error } = await supabase
-      .from("applications")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
+    try {
+      const q = query(collection(db, "applications"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      const fetchedApplications = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Application[];
+      setApplications(fetchedApplications);
+    } catch (error) {
       toast({
         title: "Error",
         description: "Failed to fetch applications",
         variant: "destructive",
       });
-      return;
     }
-
-    setApplications(data || []);
   };
 
   if (!isAuthenticated) {
@@ -262,7 +263,7 @@ export default function Admin() {
                             {app.reason}
                           </TableCell>
                           <TableCell>
-                            {new Date(app.created_at).toLocaleDateString()}
+                            {app.createdAt?.toDate().toLocaleDateString() || '-'}
                           </TableCell>
                         </TableRow>
                       ))

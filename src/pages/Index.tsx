@@ -16,11 +16,11 @@ const Index = () => {
 
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-6 text-center">
-          <div className="mb-8 animate-fade-in">
+          {/* <div className="mb-8 animate-fade-in">
             <img src={logo} alt="EdgeAura Logo" className="h-24 w-24 mx-auto mb-6 drop-shadow-[0_0_40px_rgba(0,245,160,0.4)]" />
-          </div>
+          </div> */}
 
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 mb-8 mt-20">
             <h1 className="text-5xl md:text-7xl font-bold animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <div className="mb-2">PLUG IN.</div>
               <div className="mb-2">POWER UP.</div>

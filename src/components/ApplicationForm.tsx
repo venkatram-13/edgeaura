@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/firebase/client";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -65,35 +66,11 @@ export const ApplicationForm = () => {
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-      // Insert into database
-      const { error: insertError } = await supabase.from("applications").insert({
-        name: values.name,
-        email: values.email,
-        github_link: values.github_link || null,
-        linkedin_link: values.linkedin_link || null,
-        resume_url: values.resume_url || null,
-        role: values.role,
-        reason: values.reason,
+      // Add a new document with a generated id.
+      await addDoc(collection(db, "applications"), {
+        ...values,
+        createdAt: serverTimestamp(),
       });
-
-      if (insertError) throw insertError;
-
-      // Send confirmation email
-      const { error: emailError } = await supabase.functions.invoke(
-        "send-application-email",
-        {
-          body: {
-            name: values.name,
-            email: values.email,
-            role: values.role,
-          },
-        }
-      );
-
-      if (emailError) {
-        console.error("Email error:", emailError);
-        // Don't fail the submission if email fails
-      }
 
       // Show success dialog
       setShowSuccessDialog(true);
@@ -278,7 +255,7 @@ export const ApplicationForm = () => {
             </DialogTitle>
             <DialogDescription className="text-base pt-4">
               Thank you for your interest in joining EdgeAura. We have received
-              your application and sent a confirmation email to your inbox. Our
+              your application. Our
               team will review your submission and contact you shortly.
             </DialogDescription>
           </DialogHeader>
