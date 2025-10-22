@@ -13,6 +13,7 @@ import Technology from "./pages/Technology";
 import UseCases from "./pages/UseCases";
 import Roadmap from "./pages/Roadmap";
 import JoinUs from "./pages/JoinUs";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,10 +34,11 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/why" element={<Why />} />
                 <Route path="/technology" element={<Technology />} />
-                <Route path="/use-cases" element={<UseCases />} />
-                <Route path="/roadmap" element={<Roadmap />} />
-                <Route path="/join-us" element={<JoinUs />} />
-                <Route path="*" element={<NotFound />} />
+        <Route path="/use-cases" element={<UseCases />} />
+        <Route path="/roadmap" element={<Roadmap />} />
+        <Route path="/join-us" element={<JoinUs />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
             <Footer />

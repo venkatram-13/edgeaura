@@ -1,7 +1,13 @@
 import { Users, Target, Code, Crown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ContactOverlay from "@/components/ContactOverlay";
+import { ApplicationForm } from "@/components/ApplicationForm";
+import { useState } from "react";
 
 const JoinUs = () => {
+  const [showContactOverlay, setShowContactOverlay] = useState(false);
   const roles = [
     {
       icon: Target,
@@ -71,7 +77,9 @@ const JoinUs = () => {
   ];
 
   return (
-    <main className="min-h-screen">
+    <>
+      <Navbar onContactClick={() => setShowContactOverlay(true)} />
+      <main className="min-h-screen">
       {/* Hero */}
       <section className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-4xl text-center">
@@ -153,6 +161,13 @@ const JoinUs = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Application Form */}
+      <section className="py-12 px-6">
+        <div className="container mx-auto max-w-4xl">
+          <ApplicationForm />
         </div>
       </section>
 
@@ -269,7 +284,14 @@ const JoinUs = () => {
           </div>
         </div>
       </section>
-    </main>
+      </main>
+
+      <Footer />
+      <ContactOverlay
+        isOpen={showContactOverlay}
+        onClose={() => setShowContactOverlay(false)}
+      />
+    </>
   );
 };
 
